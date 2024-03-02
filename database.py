@@ -38,6 +38,7 @@ def execute_query(query, params=None, fetch_data=False):
 
 
 def delete_old_orders():
+    """ Deletes old olders so database would be more managable. """
     delete_query = '''
     DELETE FROM orders
     WHERE Id IN (SELECT Id FROM orders ORDER BY Id LIMIT (SELECT COUNT(*) - 50 FROM orders)); '''
@@ -53,7 +54,8 @@ def delete_old_orders():
 
 
 def add_order_to_db(order_id, total_to_pay, internalId, statusId, statusName, pharmacy):
-    ''' Appends order info to the DB '''
+    ''' Appends an order to the database. '''
+
     insert_query = '''
     INSERT INTO orders (orderId, statusId, statusName, total_to_pay, pharmacy, internalId)
     VALUES (%s, %s, %s, %s, %s, %s);

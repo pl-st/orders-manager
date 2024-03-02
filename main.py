@@ -12,9 +12,9 @@ def main():
     UPDATE_INTERVAL = 5
 
     while True:
-        # Check time window for updates (8 AM to 10 PM on weekdays)
+        # Check time window for updates (8 AM to 5 PM)
         now = datetime.now()
-        if 8 <= now.hour < 22 and now.weekday() < 8:
+        if 8 <= now.hour < 17 and now.weekday() < 7:
 
             # Fetch WooCommerce orders
             wc_orders_response = wc_get_orders(NUMBER_OF_ORDERS_TO_UPDATE)
@@ -43,7 +43,7 @@ def main():
             if number_of_orders > MAX_ORDERS_IN_DB:
                 delete_old_orders()
 
-            print(f"{now.strftime('%Y-%m-%d %H:%M')} OK! All orders up to date.")
+            print(f"{now.strftime('%Y-%m-%d %H:%M')} OK! -> All orders up to date.")
 
         time.sleep(UPDATE_INTERVAL * 60)
 

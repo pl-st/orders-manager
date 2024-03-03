@@ -1,6 +1,8 @@
 from woocommerce import API
 import requests
 from requests.auth import HTTPBasicAuth
+from database import execute_query
+from datetime import datetime
 import config
 import utils
 

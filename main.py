@@ -34,8 +34,8 @@ def main():
                 order_data = extract_order_data(wc_order)
 
                 # Check if order already exists in DB
-                if order_data["id"] not in orders_db_dict:
-                    print(f"Order {order_id} not found in DB, creating...")
+                if order_data['id'] not in orders_db_dict:
+                    print(f"Order {order_data['id']} not found in DB, creating...")
                     utils.create_order(order_data)
 
             update_order_statuses(orders_db_dict, NUMBER_OF_ORDERS_TO_UPDATE)

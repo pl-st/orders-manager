@@ -39,16 +39,16 @@ def create_order(order_data):
             msg = f"Invoice & Order were generated & added to DB -> Date: {order_data['dateCreated']} ID: {order_data['id']} Client: [{order_data['customerName']}] N_of_items: {len(order_data['items'])} Total_value: {order_data['total']} BGN"
 
             print(msg)
-            utils.log_msg('general', 'info', msg)
+            log_msg('general', 'info', msg)
             return True
         else:
-            utils.log_msg(
+            log_msg(
                 'error', 'critical', f"Order {order_data['id']} from {order_data['customerName']} has {response.text}. POST Request failed with status code {response.status_code}"
             )
             return False
 
     except requests.exceptions.RequestException as e:
-        utils.log_msg(
+        log_msg(
             'error', 'critical', f"Order {order_data['id']} from {order_data['customerName']} at a price of {order_data['total']} with {len(order_data['items'])} items was NOT created! Request error: {str(e)}."
         )
         return False

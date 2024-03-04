@@ -1,14 +1,13 @@
 """ By executing main() the main logic of the script can be run. """ 
 
+import cProfile
 import time
 from datetime import datetime
-from memory_profiler import profile
 import utils
 from database import execute_query, delete_old_orders
 from woocomm import wc_get_orders, extract_order_data, update_order_statuses
+import cProfile
 
-
-@profile
 def main():
     """ Main logic of the script thats fetching orders from 
     WooCommerce and generating invoices with request.post """
@@ -56,4 +55,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    print("Program starting...")
+    cProfile.run('main()', sort='cumtime')

@@ -1,7 +1,10 @@
+""" Util module that performs logging. """
+
 import logging
 
 
 def log_msg(functionality, level, message):
+    """ Util function that performs logging. """
     # Create a logger
     if functionality == 'general':
         logger = logging.getLogger('general_logger')

@@ -1,13 +1,16 @@
+""" WooCommerce helper functions can be found here. """
+
+from datetime import datetime
+import time
 from woocommerce import API
 import requests
 from requests.auth import HTTPBasicAuth
 from database import execute_query
-from datetime import datetime
 import config
 from utils.log_msg import log_msg
 
 
-def define_WCAPI(timeout_inp):
+def define_wcapi(timeout_inp):
     """ Define WooCommerce API """
 
     wcapi = API(
@@ -22,7 +25,7 @@ def define_WCAPI(timeout_inp):
 
 
 def exponential_backoff(attempt):
-    # Exponential backoff with a maximum sleep of 1200 seconds (20 minutes)
+    """ Exponential backoff with a maximum sleep of 1200 seconds (20 minutes) """
     return min(3 ** attempt, 1200)
 
 
@@ -34,7 +37,7 @@ def update_order_status_in_wc(order_id, actual_status_name):
         bool: True if the PUT request is successful, False otherwise. """
 
     # WooCommerce API client instance.
-    wcapi = define_WCAPI(timeout_inp=40)
+    wcapi = define_wcapi(timeout_inp=40)
 
     if actual_status_name in ['изпълнена', 'частично изпълнена', 'отказана']:
         data = {"status": "completed"}
@@ -42,16 +45,16 @@ def update_order_status_in_wc(order_id, actual_status_name):
 
         if put_response.status_code != 200:
             log_msg(
-                'error', 'critical', f'ERROR! Check PUT response: {put_response.status_code}. Order {str(order_id)} was NOT set to be completed in WC.')
+                'error', 'critical', f'ERROR! Check PUT response: {put_response.status_code}.\
+                Order {str(order_id)} was NOT set to be completed in WC.')
             return False
-        else:
-            return True
+    return True
 
 
 def update_order_statuses(orders_db_dict, number_of_orders_to_update):
     ''' Update order status in RDS and make a PUT request to WooCommerce '''
 
-    # Get request of all orders from Citadel -> 4 fields of info about OrderID, InternalID, StatusID, and StatusName
+    # Get request orders from Citadel: OrderID, InternalID, StatusID, and StatusName
     response_citadel = requests.get(
         f"http://{config.URL}:7779/api/orders/getOrderStatus",
         auth=HTTPBasicAuth(config.USERNAME, config.PASSWORD),
@@ -94,7 +97,8 @@ def update_order_statuses(orders_db_dict, number_of_orders_to_update):
                     'general', 'info', f"Order {order_id} was set to be {actual_status_name}.")
                 now = datetime.now()
                 print(
-                    f"{now.strftime('%Y-%m-%d %H:%M')} Order {order_id} ({actual_status_id}) was set to be {actual_status_name}.")
+                    f"{now.strftime('%Y-%m-%d %H:%M')} Order {order_id} ({actual_status_id})",
+                    f"was set to be {actual_status_name}.")
 
     return True
 
@@ -108,7 +112,7 @@ def wc_get_orders(number_of_orders_to_update):
             - The successful response object if orders are retrieved successfully.
             - False on failure after retry attempts. """
 
-    wcapi = define_WCAPI(40)
+    wcapi = define_wcapi(40)
 
     for attempt in range(1, 8):
         try:
@@ -119,7 +123,7 @@ def wc_get_orders(number_of_orders_to_update):
 
         except requests.RequestException as e:
             log_msg(
-                'error', 'critical', f"Error in WC GET orders response: {str(e)} at attempt {attempt}")
+                'error', 'critical', f"Error WC GET orders response: {str(e)} at attempt {attempt}")
             sleep_duration = exponential_backoff(attempt)
             print(
                 f"Script is asleep for {sleep_duration} seconds due to WC GET response error")

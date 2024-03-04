@@ -1,7 +1,9 @@
-import requests
-from requests.auth import HTTPBasicAuth
+""" Creates an order on Apteka Expert 2.0 and adds it to the database. """
+
 import time
 import json
+import requests
+from requests.auth import HTTPBasicAuth
 from database import add_order_to_db
 import config
 from utils.log_msg import log_msg
@@ -33,22 +35,32 @@ def create_order(order_data):
         if response.status_code == 200:
             time.sleep(3)
 
-            add_order_to_db(order_data['id'], order_data['total'], internalId=0, statusId=0,
-                            statusName='необработена', pharmacy=order_data['customerName'])
+            params = (order_data['id'], 0, 'необработена',
+                      order_data['total'], order_data['customerName'], 0)
 
-            msg = f"Invoice & Order were generated & added to DB -> Date: {order_data['dateCreated']} ID: {order_data['id']} Client: [{order_data['customerName']}] N_of_items: {len(order_data['items'])} Total_value: {order_data['total']} BGN"
+            add_order_to_db(params)
+
+            msg = f"Invoice & Order were generated & added to DB -> \
+                Date: {order_data['dateCreated']} ID: {order_data['id']} \
+                Client: [{order_data['customerName']}] N_of_items: \
+                {len(order_data['items'])} Total_value: {order_data['total']} BGN"
 
             print(msg)
             log_msg('general', 'info', msg)
             return True
-        else:
-            log_msg(
-                'error', 'critical', f"Order {order_data['id']} from {order_data['customerName']} has {response.text}. POST Request failed with status code {response.status_code}"
-            )
-            return False
+
+        log_msg(
+            'error', 'critical', 
+            (f"Order {order_data['id']} from {order_data['customerName']} has \
+            {response.text}. POST Request failed with status code {response.status_code}")
+        )
+        return False
 
     except requests.exceptions.RequestException as e:
         log_msg(
-            'error', 'critical', f"Order {order_data['id']} from {order_data['customerName']} at a price of {order_data['total']} with {len(order_data['items'])} items was NOT created! Request error: {str(e)}."
+            'error', 'critical', 
+            (f"Order {order_data['id']} from {order_data['customerName']} \
+            at a price of {order_data['total']} with {len(order_data['items'])} \
+            items was NOT created! Request error: {str(e)}.")
         )
         return False

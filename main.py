@@ -7,7 +7,7 @@ from woocomm import wc_get_orders, extract_order_data, update_order_statuses
 
 
 def main():
-    NUMBER_OF_ORDERS_TO_UPDATE = 40
+    NUMBER_OF_ORDERS_TO_UPDATE = 35
     MAX_ORDERS_IN_DB = 70
     UPDATE_INTERVAL = 5
 

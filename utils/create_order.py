@@ -4,7 +4,7 @@ import time
 import json
 from database import add_order_to_db
 import config
-from . import log_msg
+from utils.log_msg import log_msg
 
 
 def create_order(order_data):

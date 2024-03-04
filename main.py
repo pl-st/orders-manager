@@ -7,14 +7,14 @@ from woocomm import wc_get_orders, extract_order_data, update_order_statuses
 
 
 def main():
-    NUMBER_OF_ORDERS_TO_UPDATE = 30
+    NUMBER_OF_ORDERS_TO_UPDATE = 40
     MAX_ORDERS_IN_DB = 70
     UPDATE_INTERVAL = 5
 
     while True:
         # Check time window for updates (8 AM to 5 PM)
         now = datetime.now()
-        if 8 <= now.hour < 17 and now.weekday() < 7:
+        if 8 <= now.hour < 30 and now.weekday() < 7:
 
             # Fetch WooCommerce orders
             wc_orders_response = wc_get_orders(NUMBER_OF_ORDERS_TO_UPDATE)

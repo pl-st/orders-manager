@@ -1,7 +1,7 @@
 import psycopg2
 from psycopg2 import OperationalError
 import config
-from utils import log_msg
+from utils.log_msg import log_msg
 
 
 def execute_query(query, params=None, fetch_data=False):

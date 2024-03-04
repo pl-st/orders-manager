@@ -4,7 +4,7 @@ from requests.auth import HTTPBasicAuth
 from database import execute_query
 from datetime import datetime
 import config
-import utils
+from utils.log_msg import log_msg
 
 
 def define_WCAPI(timeout_inp):
@@ -41,7 +41,7 @@ def update_order_status_in_wc(order_id, actual_status_name):
         put_response = wcapi.put(f"orders/{order_id}", data)
 
         if put_response.status_code != 200:
-            utils.log_msg(
+            log_msg(
                 'error', 'critical', f'ERROR! Check PUT response: {put_response.status_code}. Order {str(order_id)} was NOT set to be completed in WC.')
             return False
         else:
@@ -58,8 +58,8 @@ def update_order_statuses(orders_db_dict, number_of_orders_to_update):
         timeout=120)
 
     if response_citadel.status_code != 200:
-        utils.log_msg('error', 'critical',
-                      f"Error in GET request to Citadel: {response_citadel.status_code}")
+        log_msg('error', 'critical',
+                f"Error in GET request to Citadel: {response_citadel.status_code}")
         return False
 
     # Process recent orders from Citadel
@@ -90,7 +90,7 @@ def update_order_statuses(orders_db_dict, number_of_orders_to_update):
                           actual_status_id, order_id)
                 execute_query(update_query, params=params)
 
-                utils.log_msg(
+                log_msg(
                     'general', 'info', f"Order {order_id} was set to be {actual_status_name}.")
                 now = datetime.now()
                 print(
@@ -118,15 +118,15 @@ def wc_get_orders(number_of_orders_to_update):
             return wc_orders_response
 
         except requests.RequestException as e:
-            utils.log_msg(
+            log_msg(
                 'error', 'critical', f"Error in WC GET orders response: {str(e)} at attempt {attempt}")
             sleep_duration = exponential_backoff(attempt)
             print(
                 f"Script is asleep for {sleep_duration} seconds due to WC GET response error")
             time.sleep(sleep_duration)
 
-    utils.log_msg('error', 'critical',
-                  f"Failed to get orders after {attempt} attempts.")
+    log_msg('error', 'critical',
+            f"Failed to get orders after {attempt} attempts.")
 
     return False
 
@@ -135,8 +135,8 @@ def extract_order_data(single_order_response):
     ''' Returns single order data from WooCommerce '''
 
     billing_info = single_order_response['billing']
-    #phone = billing_info['phone']
-    
+    # phone = billing_info['phone']
+
     order_data = {
         "id": single_order_response['id'],
         "total": float(single_order_response['total']),
@@ -145,8 +145,7 @@ def extract_order_data(single_order_response):
         "customerEmail": billing_info['email'],
         "hasInvoice": 0,
         "items": [{"qty": item["quantity"], "sku": item["sku"], "price": item["total"]}
-        for item in single_order_response["line_items"]]
+                  for item in single_order_response["line_items"]]
     }
-    
 
     return order_data

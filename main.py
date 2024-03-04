@@ -49,7 +49,7 @@ def main():
                 delete_old_orders()
 
             print(f"{now.strftime('%Y-%m-%d %H:%M')} OK! -> All orders up to date.")
-        break
+        
         time.sleep(update_interval * 60)
 
 

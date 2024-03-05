@@ -1,4 +1,4 @@
-""" Creates an order on Apteka Expert 2.0 and adds it to the database. """
+""" Creates an order invoice in "Apteka Expert 2.0" and adds it to the database. """
 
 import time
 import json
@@ -40,10 +40,10 @@ def create_order(order_data):
 
             add_order_to_db(params)
 
-            msg = f"Invoice & Order were generated & added to DB -> \
-                Date: {order_data['dateCreated']} ID: {order_data['id']} \
-                Client: [{order_data['customerName']}] N_of_items: \
-                {len(order_data['items'])} Total_value: {order_data['total']} BGN"
+            msg = [f"Invoice & Order were generated & added to DB ->",
+                f"Date: {order_data['dateCreated']} ID: {order_data['id']}",
+                f"Client: [{order_data['customerName']}]",
+                f"Items: {len(order_data['items'])} Total: {order_data['total']} BGN"]
 
             print(msg)
             log_msg('general', 'info', msg)
@@ -51,16 +51,16 @@ def create_order(order_data):
 
         log_msg(
             'error', 'critical', 
-            (f"Order {order_data['id']} from {order_data['customerName']} has \
-            {response.text}. POST Request failed with status code {response.status_code}")
+            (f"Order {order_data['id']} from {order_data['customerName']} has" ,
+            f"{response.text}. POST Request failed with status code {response.status_code}")
         )
         return False
 
     except requests.exceptions.RequestException as e:
         log_msg(
             'error', 'critical', 
-            (f"Order {order_data['id']} from {order_data['customerName']} \
-            at a price of {order_data['total']} with {len(order_data['items'])} \
-            items was NOT created! Request error: {str(e)}.")
+            (f"Order {order_data['id']} from {order_data['customerName']}" ,
+            f"at a price of {order_data['total']} with {len(order_data['items'])}",
+            f"items was NOT created! Request error: {str(e)}.")
         )
         return False

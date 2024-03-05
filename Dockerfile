@@ -20,4 +20,4 @@ COPY . ./
 
 # Specify the command to run your app (1 CMD per container)
 # Replace with the actual command to start your app
-CMD ["python", "main.py"]  
+CMD ["python", "-u", "./main.py"] 

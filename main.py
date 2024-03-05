@@ -1,5 +1,6 @@
 """ By executing main() the main logic of the script can be run. """ 
 
+import pdb
 import time
 from datetime import datetime
 import utils
@@ -10,15 +11,17 @@ from woocomm import wc_get_orders, extract_order_data, update_order_statuses
 def main():
     """ Main logic of the script thats fetching orders from 
     WooCommerce and generating invoices with request.post """
+    
+    print("Starting...")
 
-    number_of_orders_to_update = 35
+    number_of_orders_to_update = 20
     max_orders_in_db = 70
     update_interval = 5
 
     while True:
-        # Check time window for updates (8 AM to 5 PM)
+        # Check time window for updates (8 AM to 18 PM)
         now = datetime.now()
-        if 8 <= now.hour < 30 and now.weekday() < 7:
+        if 8 <= now.hour < 19 and now.weekday() < 7:
 
             # Fetch WooCommerce orders
             wc_orders_response = wc_get_orders(number_of_orders_to_update)

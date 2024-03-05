@@ -7,39 +7,31 @@ from utils.log_msg import log_msg
 
 
 def execute_query(query, params=None, fetch_data=False):
-    '''
+    ''' 
     Executes an SQL query and returns the result.
         Args:
             query (str): The SQL query to execute.
-            params (tuple, optional): The parameters to pass to the query.
-            Defaults to None. fetch_data (bool, optional): Whether to fetch
-            the data from the query. Defaults to False.
-        Returns:
+            params (tuple, optional): The parameters to pass to the query. Defaults to None.
+            fetch_data (bool, optional): Whether to fetch the data from the query. Defaults to False.
+        Returns: 
             The result of the query, either the number of rows affected or the fetched data.
-        Raises:
-            OperationalError: If there is an error connecting to
-            the database or executing the query.   
+        Raises: 
+            OperationalError: If there is an error connecting to the database or executing the query.     
     '''
 
-    try:
-        conn = psycopg2.connect(**config.DATABASE)
+    with psycopg2.connect(**config.DATABASE) as conn:
         cur = conn.cursor()
-        # if params = None insert empty tuple
-        cur.execute(query, params or ())
 
-        if fetch_data:
-            data = cur.fetchall()
-            return data
-        conn.commit()
-        return True
+        try:
+            cur.execute(query, params or ())
 
-    except OperationalError as e:
-        print(f"The error '{e}' occurred")
-        return False
-    finally:
-        if conn:
-            cur.close()
-            conn.close()
+            if fetch_data:
+                data = cur.fetchall()
+                return data
+            else:
+                conn.commit()
+        except (OperationalError, DatabaseError) as e:
+            print(f"An error occurred: {e}")
 
 
 def delete_old_orders():

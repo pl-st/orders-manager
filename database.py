@@ -6,7 +6,7 @@ import config
 from utils.log_msg import log_msg
 
 
-def execute_query(query, params=None, fetch_data=False):
+def execute_query(query: str, params=None, fetch_data=False):
     ''' 
     Executes an SQL query and returns the result.
         Args:
@@ -36,6 +36,7 @@ def execute_query(query, params=None, fetch_data=False):
 
 def delete_old_orders():
     """ Deletes old olders so database would be more managable. """
+    
     delete_query = '''
     DELETE FROM orders
     WHERE Id IN (SELECT Id FROM orders ORDER BY Id LIMIT (SELECT COUNT(*) - 50 FROM orders)); '''
@@ -50,7 +51,7 @@ def delete_old_orders():
     print(f"Last order ID is {last_order_id[0][0]}")
 
 
-def add_order_to_db(params):
+def add_order_to_db(params: tuple):
     ''' Appends an order to the database. '''
 
     insert_query = '''

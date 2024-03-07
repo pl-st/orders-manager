@@ -9,7 +9,7 @@ import config
 from utils.log_msg import log_msg
 
 
-def create_order(order_data):
+def create_order(order_data: dict) -> bool:
     """ Creates an order on Apteka Expert 2.0 and adds it to the database.
     Args:
         order_data:

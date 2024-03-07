@@ -3,7 +3,7 @@
 import logging
 
 
-def log_msg(functionality, level, message):
+def log_msg(functionality: str, level: str, message: str):
     """ Util function that performs logging. """
     # Create a logger
     if functionality == 'general':

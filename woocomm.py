@@ -10,7 +10,7 @@ import config
 from utils.log_msg import log_msg
 
 
-def define_wcapi(timeout_inp):
+def define_wcapi(timeout_inp: int):
     """ Define WooCommerce API """
 
     wcapi = API(
@@ -24,12 +24,12 @@ def define_wcapi(timeout_inp):
     return wcapi
 
 
-def exponential_backoff(attempt):
+def exponential_backoff(attempt: int):
     """ Exponential backoff with a maximum sleep of 1200 seconds (20 minutes) """
     return min(3 ** attempt, 1200)
 
 
-def update_order_status_in_wc(order_id, actual_status_name):
+def update_order_status_in_wc(order_id: int, actual_status_name: str) -> bool:
     """ Sends a PUT request to WooCommerce to update the order status to "completed".
     Args:
         order_id (str): Order ID in WooCommerce.
@@ -51,7 +51,7 @@ def update_order_status_in_wc(order_id, actual_status_name):
     return True
 
 
-def update_order_statuses(orders_db_dict, number_of_orders_to_update):
+def update_order_statuses(orders_db_dict: dict, number_of_orders_to_update: int) -> bool:
     ''' Update order status in RDS and make a PUT request to WooCommerce '''
 
     # Get request orders from Citadel: OrderID, InternalID, StatusID, and StatusName
@@ -103,7 +103,7 @@ def update_order_statuses(orders_db_dict, number_of_orders_to_update):
     return True
 
 
-def wc_get_orders(number_of_orders_to_update):
+def wc_get_orders(number_of_orders_to_update: int):
     """ Fetches a specified number of orders from WooCommerce using the REST API.
     Args:
         number_of_orders_to_update (int): Number of orders to retrieve.
@@ -135,7 +135,7 @@ def wc_get_orders(number_of_orders_to_update):
     return False
 
 
-def extract_order_data(single_order_response):
+def extract_order_data(single_order_response: dict) -> dict:
     ''' Returns single order data from WooCommerce '''
 
     billing_info = single_order_response['billing']

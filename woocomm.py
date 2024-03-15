@@ -140,16 +140,22 @@ def extract_order_data(single_order_response: dict) -> dict:
 
     billing_info = single_order_response['billing']
     # phone = billing_info['phone']
+    
+    if single_order_response['customer_note']:
+        customer_name = billing_info['last_name'] + ' * Създ. бележка!'
+    else:
+        customer_name = billing_info['last_name']
 
     order_data = {
         "id": single_order_response['id'],
         "total": float(single_order_response['total']),
         "dateCreated": ' '.join(single_order_response['date_created'].split('T')),
-        "customerName": billing_info['last_name'],
+        "customerName": customer_name,
         "customerEmail": billing_info['email'],
         "hasInvoice": 0,
         "items": [{"qty": item["quantity"], "sku": item["sku"], "price": item["total"]}
-                  for item in single_order_response["line_items"]]
+                  for item in single_order_response["line_items"]] , 
+        "customer_notes" : single_order_response['customer_note']
     }
 
     return order_data

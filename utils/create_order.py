@@ -19,6 +19,7 @@ def create_order(order_data: dict) -> bool:
             customer_name (str): Customer name.
             items_list (list): List of items in the order.
             customer_email (str): Customer email address.
+            customer_notes (str): Additional notes
     Returns:
         bool: True if the order is created successfully, False otherwise. """
 
@@ -27,7 +28,9 @@ def create_order(order_data: dict) -> bool:
 
     headers = {"Content-Type": "application/json"}
     json_data = json.dumps(order_data)
-
+    
+    customer_notes = 0 if not order_data['customer_notes'] else 1
+    
     try:
         response = requests.post(url, headers=headers, data=json_data, auth=HTTPBasicAuth(
             config.USERNAME, config.PASSWORD), timeout=120)
@@ -36,16 +39,19 @@ def create_order(order_data: dict) -> bool:
             time.sleep(3)
 
             params = (order_data['id'], 0, 'необработена',
-                      order_data['total'], order_data['customerName'], 0)
+                      order_data['total'], order_data['customerName'], 0, customer_notes)
 
             add_order_to_db(params)
 
             msg = [f"Invoice & Order were generated & added to DB ->",
                 f"Date: {order_data['dateCreated']} ID: {order_data['id']}",
                 f"Client: [{order_data['customerName']}]",
-                f"Items: {len(order_data['items'])} Total: {order_data['total']} BGN"]
+                f"Items: {len(order_data['items'])} Total: {order_data['total']} BGN",
+                f"Customer notes: {customer_notes}"]
 
             print(msg)
+            # Print customer_notes for future debugging if needed. Delete this print otherwise!
+            print(f" ---- {order_data['customer_notes']} ---- ")
             log_msg('general', 'info', msg)
             return True
 
@@ -63,4 +69,5 @@ def create_order(order_data: dict) -> bool:
             f"at a price of {order_data['total']} with {len(order_data['items'])}",
             f"items was NOT created! Request error: {str(e)}.")
         )
+        print("Msg has been logged!")
         return False

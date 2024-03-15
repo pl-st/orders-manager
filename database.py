@@ -1,7 +1,7 @@
 """ Module that provides the main functionality of the RDS database. """
 
 import psycopg2
-from psycopg2 import OperationalError
+from psycopg2 import OperationalError, DatabaseError
 import config
 from utils.log_msg import log_msg
 
@@ -55,8 +55,8 @@ def add_order_to_db(params: tuple):
     ''' Appends an order to the database. '''
 
     insert_query = '''
-    INSERT INTO orders (orderId, statusId, statusName, total_to_pay, pharmacy, internalId)
-    VALUES (%s, %s, %s, %s, %s, %s);
+    INSERT INTO orders (orderId, statusId, statusName, total_to_pay, pharmacy, internalId, customer_notes)
+    VALUES (%s, %s, %s, %s, %s, %s, %s);
     '''
 
     execute_query(insert_query, params=params)

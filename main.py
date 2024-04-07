@@ -19,7 +19,7 @@ def main():
     while True:
         # Check time window for updates (8 AM to 18 PM)
         now = datetime.now()
-        if 6 <= now.hour < 21 and now.weekday() < 7:
+        if 7 <= now.hour < 19 and now.weekday() < 7:
             print("Starting...")
 
             # Fetch WooCommerce orders

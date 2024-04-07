@@ -4,6 +4,11 @@ import psycopg2
 from psycopg2 import OperationalError, DatabaseError
 import config
 from utils.log_msg import log_msg
+import time
+
+def exponential_backoff(attempt):
+    # Exponential backoff with a maximum sleep of 1200 seconds (20 minutes)
+    return min(3 ** attempt, 1200)
 
 
 def execute_query(query: str, params=None, fetch_data=False):
@@ -20,7 +25,15 @@ def execute_query(query: str, params=None, fetch_data=False):
     '''
 
     with psycopg2.connect(**config.DATABASE) as conn:
-        cur = conn.cursor()
+
+        for attempt in range(1, 10):
+            try:
+                cur = conn.cursor()
+                break
+            except TimeoutError as e:
+                sleep_duration = exponential_backoff(attempt)
+                print(f"Script is idle for {sleep_duration} seconds due to conn.cursos() error: {str(e)}")
+                time.sleep(sleep_duration)
 
         try:
             cur.execute(query, params or ())
@@ -31,7 +44,7 @@ def execute_query(query: str, params=None, fetch_data=False):
             else:
                 conn.commit()
         except (OperationalError, DatabaseError) as e:
-            print(f"An error occurred: {e}")
+            print(f"A cur.execute() error occurred: {e}")
 
 
 def delete_old_orders():
